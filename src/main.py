@@ -5,10 +5,10 @@ import time
 import threading
 from plugstate import PlugState
 
-MQTT_SERVER = os.getenv('MQTT_SERVER', "192.168.1.93")
+MQTT_SERVER = os.getenv('MQTT_SERVER', "")
 MQTT_PORT = os.getenv('MQTT_PORT', 1883)
-MQTT_USER = os.getenv('MQTT_USER', "hass")
-MQTT_PASS = os.getenv('MQTT_PASS', "mqttpass")
+MQTT_USER = os.getenv('MQTT_USER', "")
+MQTT_PASS = os.getenv('MQTT_PASS', "")
 QUERY_TIME = os.getenv('QUERY_TIME', 5)
 PREFIX = os.getenv('PREFIX', 'home')
 

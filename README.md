@@ -1,11 +1,11 @@
-# Yeelight to MQTT bridge
+# Broadlink (SP2 and RM2) to MQTT bridge
 
-Works with Yeelight WiFi bulbs (color and monochrome).
+Works with Broadlink WiFi plugs and RM2-Mini.
 You need to edit you bulb IPs in main.py (not yet fixed).
 
 Sample docker-compose.yml file:
 ```
-broadlink:
+main:
   build: .
   container_name: broadlink
   environment:
@@ -20,6 +20,6 @@ docker-compose build && docker-compose up -d
 ```
 
 ## Known bugs:
-- Lamp's alive status updated only at startup.
+- Plug alive status updated only at startup.
 - IP-Name list in main.py
 - Bad code style =(

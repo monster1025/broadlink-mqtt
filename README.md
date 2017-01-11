@@ -5,9 +5,9 @@ You need to edit you bulb IPs in main.py (not yet fixed).
 
 Sample docker-compose.yml file:
 ```
-yeelight:
+broadlink:
   build: .
-  container_name: yeelight
+  container_name: broadlink
   environment:
     - MQTT_SERVER=192.168.1.93
     - MQTT_USER=mqtt_user

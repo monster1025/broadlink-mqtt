@@ -1,4 +1,4 @@
-FROM jfloff/alpine-python:3.4
+FROM python:3.7.1-stretch
 
 ENV LIBRARY_PATH=/lib:/usr/lib
 

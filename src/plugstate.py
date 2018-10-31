@@ -63,7 +63,7 @@ class PlugState:
 					print("No ir packets recieved")
 					return
 				self.learn_temp = binascii.hexlify(ir_packet)
-				print("Learned code:", self.learn_temp)
+				print("Learned code:", ir_packet)
 			if (param == 'code' and self.type == 'remote'):
 				if (value == None or value == ""):
 					print("No ir packets in value")

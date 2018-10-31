@@ -13,10 +13,12 @@ QUERY_TIME = os.getenv('QUERY_TIME', 5)
 PREFIX = os.getenv('PREFIX', 'home')
 
 ips = dict({
-	'192.168.1.103':{'name':'kitchen-right', 'mac':bytearray(b'vr\xcb\rC\xb4'), 'type':'plug'},
-	'192.168.1.183':{'name':'balcony-heater', 'mac':bytearray(b'\xc1j\xcb\rC\xb4'), 'type':'plug'}, 
-	'192.168.1.188':{'name':'kitchen-kettle', 'mac':bytearray(b'9V\xcb\rC\xb4'), 'type':'plug'},
-	'192.168.1.49':{'name':'rm2', 'mac':bytearray(b'U"\xcc\rC\xb4'), 'type':'remote'}
+	'192.168.1.49':{'name':'rm2', 'mac':'B4430DCC2255', 'type':'remote'},
+	# '192.168.1.62':{'name':'main-humidifier', 'mac':'B4430DCB6AC1', 'type':'plug'},
+	 '192.168.1.63':{'name':'kitchen-mini-light', 'mac':'B4430DCB6C07', 'type':'plug'},
+	# '192.168.1.64':{'name':'balcony-heater', 'mac':'B4430DCB7276', 'type':'plug'}, 
+	# '192.168.1.65':{'name':'kitchen-kettle', 'mac':'B4430DCB5639', 'type':'plug'},
+	# '192.168.1.66':{'name':'balcony-lights', 'mac':'B4430DCB6F18', 'type':'plug'},
 })
 
 plugs=[]
@@ -40,24 +42,30 @@ def push_data(client, model, sid, data):
 							   prop=key)
 		client.publish(path, payload=value, qos=0, retain=True)
 
+def reverse_hex(s):
+	return "".join(map(str.__add__, s[-2::-2] ,s[-1::-2]))
+
 def init_plugs():
 	plugs=[]
 	for ip in ips:
-		try:
-			props = ips[ip]
-			name = props['name']
-			mac = props['mac']
-			typeName = props['type']
-			typeId = 0x2720 #SP2 by default
-			if (typeName == "remote"):
-				typeId = 0x2712
-			broadObj = broadlink.gendevice(typeId, (ip, 80) , mac)
-			broadObj.auth()
-			plug = PlugState(ip, typeName, name, broadObj)
-			plug.update_properties()
-			plugs.append(plug)
-		except Exception as e:
-			print('Connection to ', str(ip) , ' error:', str(e))
+		for i in range(1,3):
+			try:
+				props = ips[ip]
+				name = props['name']
+				mac = props['mac']
+				typeName = props['type']
+				typeId = 0x2720 #SP2 by default
+				if (typeName == "remote"):
+					typeId = 0x2712
+				macBytes = bytes.fromhex(reverse_hex(mac))
+				broadObj = broadlink.gendevice(typeId, (ip, 80) , macBytes)
+				broadObj.auth()
+				plug = PlugState(ip, typeName, name, broadObj)
+				plug.update_properties()
+				plugs.append(plug)
+				break
+			except Exception as e:
+				print('['+str(i) + '] Connection to ', str(ip) , ' error:', str(e))
 	return plugs
 
 def refresh_plug_states(data_callback):
@@ -98,7 +106,7 @@ def on_mqtt_message(client, userdata, msg):
 		plug.process_command(param, value)
 		processNow=True
 
-def on_connect(client, userdata, rc):
+def on_connect(client, userdata, rc, kwargs):
 	client.subscribe(PREFIX + "/plug/+/+/set")
 	client.subscribe(PREFIX + "/remote/+/+/learn")
 	client.subscribe(PREFIX + "/remote/+/+/set")
@@ -130,3 +138,4 @@ if __name__ == "__main__":
 
     # and process mqtt messages in this thread
 	client.loop_forever()
+
